@@ -1,0 +1,137 @@
+﻿<!DOCTYPE html>
+<html>
+
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+	<meta name="viewport" content="height = device-height, width = device-width, user-scalable = no" />
+	<title>Garage Door Opener</title>
+	<script type="text/javascript" src="/webiopi.js"></script>
+	<script type="text/javascript">
+		webiopi().ready(function () {
+			var content, content2, button;
+			content = $("#content");
+			content2 = $("#openCloseButton");
+			$(checkStatus);
+			webiopi().setFunction(16, "IN");
+
+
+			// create an "Door Status Button" labeled button for GPIO 16
+			button = webiopi().createGPIOButton(16, "");
+			content2.append(button); // append button to content div
+
+			// create button that calls the mousedown function below
+			button = webiopi().createButton("button", "GARAGE DOOR \nBUTTON", mousedown);
+			content.append(button); // append button to content div
+
+			function checkStatus() {
+				if ($('#gpio16').hasClass('LOW')) {
+					$("#gpio16").html('CLOSED');
+				} else {
+					$("#gpio16").html('OPEN');
+				}
+				setTimeout(checkStatus, 1000)
+			}
+
+			// this function gets called by the mousedown function below - it sets gpio7 back to 'IN'
+			function mouseup() {
+				webiopi().setFunction(17, "IN");
+				//window.alert("RELAY OPEN");
+			}
+
+			// this function sets gpio7 to 'OUT' which will trip the relay.  After .5 second it calls mouseup above.
+			// hides the confirmation div and makes doge face change
+			function mousedown() {
+				webiopi().setFunction(17, "OUT");
+				//window.alert("RELAY CLOSED");
+				setTimeout(mouseup, 500);
+			}
+
+			// constantly refresh status to see if door is open or closed
+			webiopi().refreshGPIO(true)
+		});
+	</script>
+	<style type="text/css">
+		body {
+			font-family: Arial, Helvetica, Sans-Serif;
+			padding: 0px;
+			margin: 0px;
+			background: #CCCCCC;
+		}
+
+		#content {
+			width: 300px;
+			height: 250px;
+		}
+
+		/* Status Button */
+		button {
+			display: block;
+			margin: 0px 0px 25px 0px;
+			margin-left: auto;
+			margin-right: auto;
+			padding: 0px;
+			width: 300px;
+			height: 50px;
+			font-size: 24pt;
+			font-weight: bold;
+			color: black;
+			border-radius: 10px !important;
+		}
+
+		/* Garage open/close Button */
+		button#button {
+			margin-top: 30px;
+			height: 250px !important;
+			background: #808080;
+			border-radius: 10px !important;
+			cursor: pointer !important;
+		}
+
+		button#button:hover {
+			background-color: #cccccc !important;
+		}
+
+		button#button:active {
+			background-color: #6e0dd0 !important;
+		}
+
+		#gpio16.LOW {
+			color: #000 !important;
+			background: #39ff14;
+		}
+
+		#gpio16.HIGH {
+			color: #000 !important;
+			background: #ff6600;
+		}
+
+		#header {
+			margin-left: auto;
+			margin-right: auto;
+			margin-top: 20px !important;
+			padding-top: 0px !important;
+
+		}
+
+		h2 {
+			text-align: center;
+			margin-top: 0px !important;
+			margin-bottom: 5px !important;
+		}
+
+		#openCloseButton {
+			width: 300px;
+			height: 60px;
+		}
+	</style>
+</head>
+
+<body>
+	<div id="header">
+		<h2>Door Status</h2>
+	</div>
+	<div id="openCloseButton" style="margin-left: auto; margin-right: auto; position:relative"></div>
+	<div id="content" style="margin-left: auto; margin-right: auto; position:relative"></div>
+</body>
+
+</html>
