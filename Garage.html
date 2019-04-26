@@ -18,8 +18,8 @@
 			content = $("#content");
 			content2 = $("#openCloseButton");
 			$(checkStatus);
-			webiopi().setFunction(16, "IN");
-
+			webiopi().setFunction(16, "in");
+			webiopi().setFunction(4, "in");
 
 			// create an "Door Status Button" labeled button for GPIO 16
 			button = webiopi().createGPIOButton(16, "");
@@ -35,19 +35,20 @@
 				} else {
 					$("#gpio16").html('OPEN');
 				}
+				webiopi().digitalWrite(4, 1)
 				setTimeout(checkStatus, 1000)
 			}
 
-			// this function gets called by the mousedown function below - it sets gpio17 back to 'IN'
+			// this function gets called by the mousedown function below - it sets gpio4 back to 'IN'
 			function mouseup() {
-				webiopi().setFunction(17, "IN");
+				webiopi().setFunction(4, "in");
 				//window.alert("RELAY OPEN");
 			}
 
-			// this function sets gpio17 to 'OUT' which will trip the relay.  After .5 second it calls mouseup above.
-			// hides the confirmation div and makes doge face change
+			// this function sets gpio4 to 'OUT' which will trip the relay.  After .5 second it calls mouseup above.
 			function mousedown() {
-				webiopi().setFunction(17, "OUT");
+
+				webiopi().setFunction(4, 'out');
 				//window.alert("RELAY CLOSED")
 				setTimeout(mouseup, 500);
 			}
